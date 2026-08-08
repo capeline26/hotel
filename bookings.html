@@ -21,40 +21,99 @@
         </ul>
       </div>
     </nav>
-<p>
-  Make your booking here:<br>
+  </header>
+
+  <p>
+    Make your booking here:<br>
     <table>
       <tr>
-        <th>Avail Room No.   </th>
-        <th>Room Type<th>
-        <th> Price per night    </th>
+        <th>Avail Room No.</th>
+        <th>Room Type</th>
+        <th>Price per night</th>
       </tr>
       <tr>
-        <td> #14 </td>
-        <td> Classic <td>
-        <td> R930</td>
+        <td>#14</td>
+        <td>Classic</td>
+        <td>R930</td>
       </tr>
-        <td> #19 </td>
-        <td> Luxury <td>
-        <td> R1210</td>
+      <tr>
+        <td>#19</td>
+        <td>Luxury</td>
+        <td>R1210</td>
       </tr>
-      </table> <br>
-      <form action="https://formsubmit.co/Capeline.2025@gmail.com" method="POST">
-        <input type="hidden" name="access_key" value="68b090b1-3f88-404b-b6f6-eb44d1ea73f1">
-        <label>Name and surname </label>
-        <input name="Name and surname" required="" pattern="{2,}"><br>
-        <label>Email</label>
-        <input name="Email" required="" pattern="[a-zA-Z]{4,}[@]{1}[a-zA-Z]{3,}[.]{1}[a-zA-Z]{3,}" title="Please an Email Address (1234@123.123)"><br>
-        <label>Check in date </label>
-        <input name="Check in date" type="date" required=""><br>
-        <label>Check out date</label>
-        <input name="Check out date" type="date"><br>
-        <label>Room Number </label>
-          <select name="Room Number" class="border border-gray-300 rounded-lg p-2.5 w-full focus:outline-none focus:ring focus:ring-blue-500"><option value="#14">#14</option><option value="#19">#19</option>\</select><br>
-          <button type="submit" class="btn">Submit</button>
-        </form>  
-</p>
-<footer class="main-footer">
-  <p>Capeline Resort &copy;, 2025</p>
-</footer>
+    </table> 
+    <br>
+    
+    <form id="bookingForm">
+      <label>Name and surname </label>
+      <input id="fullName" name="Name and surname" type="text" required><br>
+      
+      <label>Email</label>
+      <input id="email" name="Email" type="email" required><br>
+      
+      <label>Check in date </label>
+      <input id="checkIn" name="Check in date" type="date" required><br>
+      
+      <label>Check out date</label>
+      <input id="checkOut" name="Check out date" type="date" required><br>
+      
+      <label>Room Number </label>
+      <select id="roomNumber" name="Room Number" class="border border-gray-300 rounded-lg p-2.5 w-full focus:outline-none focus:ring focus:ring-blue-500">
+        <option value="#14">#14</option>
+        <option value="#19">#19</option>
+      </select><br>
+      
+      <button type="submit" class="btn">Submit</button>
+    </form>  
+  </p>
+
+  <footer class="main-footer">
+    <p>Capeline Resort &copy;, 2025</p>
+  </footer>
+
+  <!-- Firebase Modular SDK Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://gstatic.com";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://gstatic.com";
+
+    // ⚠️ TODO: REPLACE THIS OBJECT WITH YOUR ACTUAL FIREBASE CONFIG
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_://firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_://appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Form submission event handler
+    document.getElementById("bookingForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Collect data fields
+      const bookingData = {
+        name: document.getElementById("fullName").value,
+        email: document.getElementById("email").value,
+        checkInDate: document.getElementById("checkIn").value,
+        checkOutDate: document.getElementById("checkOut").value,
+        roomNumber: document.getElementById("roomNumber").value,
+        createdAt: serverTimestamp() // Adds exact arrival date/time to DB
+      };
+
+      try {
+        // Saves a new document into a collection called "bookings"
+        await addDoc(collection(db, "bookings"), bookingData);
+        alert("🎉 Booking successfully submitted!");
+        document.getElementById("bookingForm").reset();
+      } catch (error) {
+        console.error("Error saving booking: ", error);
+        alert("❌ Error sending booking. Please try again.");
+      }
+    });
+  </script>
+</body>
 </html>
